@@ -1,0 +1,53 @@
+unit RelatoriosPorDatas;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ComCtrls, Vcl.StdCtrls;
+
+type
+  TFrmRelDatas = class(TForm)
+    Label1: TLabel;
+    Label2: TLabel;
+    dataInicial: TDateTimePicker;
+    dataFinal: TDateTimePicker;
+    btnRelatorio: TSpeedButton;
+    procedure FormShow(Sender: TObject);
+    procedure btnRelatorioClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmRelDatas: TFrmRelDatas;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo;
+
+procedure TFrmRelDatas.btnRelatorioClick(Sender: TObject);
+begin
+if rel = 'Caixa' then
+begin
+
+end;
+
+if rel = 'Movimentacoes' then
+begin
+
+end;
+
+end;
+
+procedure TFrmRelDatas.FormShow(Sender: TObject);
+begin
+dataInicial.Date := Date;
+dataFinal.Date := Date;
+end;
+
+end.

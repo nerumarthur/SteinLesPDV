@@ -1,0 +1,6 @@
+ShellExecute(handle,'open', 'cmd.exe',Pchar('/c caminho_mysqldump.exe pdv -u root -hlocalhost -p --opt -v> caminho_arquivo.sql'),nil, SW_SHOW );
+
+
+
+COLOCAR ESSA DEPENDENCIA NO CODIGO USES
+ShellApi

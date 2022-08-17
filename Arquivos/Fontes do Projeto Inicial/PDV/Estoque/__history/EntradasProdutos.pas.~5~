@@ -1,0 +1,161 @@
+unit EntradasProdutos;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ComCtrls, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls, Vcl.Buttons;
+
+type
+  TFrmEntradaProdutos = class(TForm)
+    Label2: TLabel;
+    btnNovo: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    BtnEditar: TSpeedButton;
+    BtnExcluir: TSpeedButton;
+    Label1: TLabel;
+    btnBuscarPro: TSpeedButton;
+    Label3: TLabel;
+    EdtProduto: TEdit;
+    DBGrid1: TDBGrid;
+    edtQuantidade: TEdit;
+    Label4: TLabel;
+    edtValor: TEdit;
+    edtFornecedor: TEdit;
+    btnBuscarForn: TSpeedButton;
+    Label5: TLabel;
+    dataBuscar: TDateTimePicker;
+    lblTotal: TLabel;
+    procedure FormShow(Sender: TObject);
+    procedure btnNovoClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure btnBuscarProClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure btnBuscarFornClick(Sender: TObject);
+  private
+    { Private declarations }
+
+     procedure limpar;
+      procedure habilitarCampos;
+      procedure desabilitarCampos;
+
+      procedure associarCampos;
+      procedure listar;
+      procedure buscarData;
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmEntradaProdutos: TFrmEntradaProdutos;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo, Produtos, Fornecedores;
+
+procedure TFrmEntradaProdutos.associarCampos;
+begin
+  dm.tb_entrada_pro.FieldByName('produto').Value := EdtProduto.Text;
+   dm.tb_entrada_pro.FieldByName('quantidade').Value := edtQuantidade.Text;
+   dm.tb_entrada_pro.FieldByName('fornecedor').Value := idFornecedor;
+    dm.tb_entrada_pro.FieldByName('valor').Value := edtValor.Text;
+     dm.tb_entrada_pro.FieldByName('total').Value := lblTotal.Caption;
+     dm.tb_entrada_pro.FieldByName('data').Value := DateToStr(Date);
+end;
+
+procedure TFrmEntradaProdutos.btnBuscarFornClick(Sender: TObject);
+begin
+chamada := 'Forn';
+FrmFornecedores := TFrmFornecedores.Create(self);
+FrmFornecedores.Show;
+end;
+
+procedure TFrmEntradaProdutos.btnBuscarProClick(Sender: TObject);
+begin
+chamada := 'Prod';
+FrmProdutos := TFrmProdutos.Create(self);
+FrmProdutos.Show;
+end;
+
+procedure TFrmEntradaProdutos.btnNovoClick(Sender: TObject);
+begin
+ habilitarCampos;
+  dm.tb_entrada_pro.Insert;
+  btnSalvar.Enabled := true;
+
+end;
+
+procedure TFrmEntradaProdutos.btnSalvarClick(Sender: TObject);
+begin
+ if Trim(EdtProduto.Text) = '' then
+       begin
+           MessageDlg('Escolha um Produto!', mtInformation, mbOKCancel, 0);
+
+           exit;
+       end;
+
+
+       if Trim(EdtFornecedor.Text) = '' then
+       begin
+           MessageDlg('Escolha um Produto!', mtInformation, mbOKCancel, 0);
+
+           exit;
+       end;
+end;
+
+procedure TFrmEntradaProdutos.buscarData;
+begin
+
+end;
+
+procedure TFrmEntradaProdutos.desabilitarCampos;
+begin
+
+  edtValor.Enabled := false;
+   edtQuantidade.Enabled := false;
+  btnBuscarPro.Enabled := false;
+    btnBuscarForn.Enabled := false;
+end;
+
+procedure TFrmEntradaProdutos.FormActivate(Sender: TObject);
+begin
+nomeProduto := edtProduto.Text;
+nomeFornecedor := edtFornecedor.Text;
+end;
+
+procedure TFrmEntradaProdutos.FormShow(Sender: TObject);
+begin
+ desabilitarCampos;
+  dm.tb_entrada_pro.Active := true;
+  listar;
+end;
+
+procedure TFrmEntradaProdutos.habilitarCampos;
+begin
+edtValor.Enabled := true;
+   edtQuantidade.Enabled := true;
+  btnBuscarPro.Enabled := true;
+  btnBuscarForn.Enabled := true;
+end;
+
+procedure TFrmEntradaProdutos.limpar;
+begin
+ edtValor.Text := '0';
+   edtQuantidade.Text := '1';
+   EdtProduto.Text := '';
+   edtFornecedor.Text := '';
+   lblTotal.Caption := '0';
+end;
+
+procedure TFrmEntradaProdutos.listar;
+begin
+ dm.query_entrada_pro.Close;
+       dm.query_entrada_pro.SQL.Clear;
+       dm.query_entrada_pro.SQL.Add('SELECT * from entrada_produtos order by data desc');
+       dm.query_entrada_pro.Open;
+end;
+
+end.

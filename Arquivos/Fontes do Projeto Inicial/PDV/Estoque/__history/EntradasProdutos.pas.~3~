@@ -1,0 +1,107 @@
+unit EntradasProdutos;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ComCtrls, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls, Vcl.Buttons;
+
+type
+  TFrmEntradaProdutos = class(TForm)
+    Label2: TLabel;
+    btnNovo: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    BtnEditar: TSpeedButton;
+    BtnExcluir: TSpeedButton;
+    Label1: TLabel;
+    btnBuscarPro: TSpeedButton;
+    Label3: TLabel;
+    EdtProduto: TEdit;
+    DBGrid1: TDBGrid;
+    edtQuantidade: TEdit;
+    Label4: TLabel;
+    edtValor: TEdit;
+    edtFornecedor: TEdit;
+    btnBuscarForn: TSpeedButton;
+    Label5: TLabel;
+    dataBuscar: TDateTimePicker;
+    lblTotal: TLabel;
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+
+     procedure limpar;
+      procedure habilitarCampos;
+      procedure desabilitarCampos;
+
+      procedure associarCampos;
+      procedure listar;
+      procedure buscarData;
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmEntradaProdutos: TFrmEntradaProdutos;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo;
+
+procedure TFrmEntradaProdutos.associarCampos;
+begin
+  dm.tb_entrada_pro.FieldByName('produto').Value := EdtProduto.Text;
+   dm.tb_entrada_pro.FieldByName('quantidade').Value := edtQuantidade.Text;
+   dm.tb_entrada_pro.FieldByName('fornecedor').Value := idFornecedor;
+    dm.tb_entrada_pro.FieldByName('valor').Value := edtValor.Text;
+     dm.tb_entrada_pro.FieldByName('total').Value := lblTotal.Text;
+     dm.tb_entrada_pro.FieldByName('data').Value := DateToStr(Date);
+end;
+
+procedure TFrmEntradaProdutos.buscarData;
+begin
+
+end;
+
+procedure TFrmEntradaProdutos.desabilitarCampos;
+begin
+
+  edtValor.Enabled := false;
+   edtQuantidade.Enabled := false;
+  btnBuscarPro.Enabled := false;
+end;
+
+procedure TFrmEntradaProdutos.FormShow(Sender: TObject);
+begin
+ desabilitarCampos;
+  dm.tb_entrada_pro.Active := true;
+  listar;
+end;
+
+procedure TFrmEntradaProdutos.habilitarCampos;
+begin
+edtValor.Enabled := true;
+   edtQuantidade.Enabled := true;
+  btnBuscarPro.Enabled := true;
+end;
+
+procedure TFrmEntradaProdutos.limpar;
+begin
+ edtValor.Text = '';
+   edtQuantidade.Text = '';
+   EdtProduto.Text = '';
+   edtFornecedor.Text = '';
+end;
+
+procedure TFrmEntradaProdutos.listar;
+begin
+ dm.query_entrada_pro.Close;
+       dm.query_entrada_pro.SQL.Clear;
+       dm.query_entrada_pro.SQL.Add('SELECT * from entrada_produtos order by data desc');
+       dm.query_entrada_pro.Open;
+end;
+
+end.

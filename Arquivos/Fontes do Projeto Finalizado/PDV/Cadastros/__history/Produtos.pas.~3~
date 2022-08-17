@@ -1,0 +1,148 @@
+unit Produtos;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ExtCtrls, Vcl.Buttons,
+  Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls;
+
+type
+  TFrmProdutos = class(TForm)
+    Label1: TLabel;
+    EdtBuscarNome: TEdit;
+    Label2: TLabel;
+    EdtNome: TEdit;
+    Label3: TLabel;
+    edtDescricao: TEdit;
+    DBGrid1: TDBGrid;
+    btnNovo: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    BtnEditar: TSpeedButton;
+    BtnExcluir: TSpeedButton;
+    Label4: TLabel;
+    edtCodigo: TEdit;
+    imgCod: TImage;
+    edtValor: TEdit;
+    Label5: TLabel;
+    img: TImage;
+    btnAdd: TSpeedButton;
+    Panel1: TPanel;
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+     procedure limpar;
+      procedure habilitarCampos;
+      procedure desabilitarCampos;
+
+      procedure associarCampos;
+      procedure listar;
+
+      procedure GerarCodigo(codigo: string; img: TCanvas);
+
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmProdutos: TFrmProdutos;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo;
+
+{ TFrmProdutos }
+
+procedure TFrmProdutos.associarCampos;
+begin
+   dm.tb_produtos.FieldByName('nome').Value := edtNome.Text;
+   dm.tb_produtos.FieldByName('descricao').Value := edtDescricao.Text;
+   dm.tb_produtos.FieldByName('codigo').Value := edtCodigo.Text;
+   dm.tb_produtos.FieldByName('valor').Value := EdtValor.Text;
+
+   dm.tb_forn.FieldByName('data').Value := DateToStr(Date);
+end;
+
+procedure TFrmProdutos.desabilitarCampos;
+begin
+ edtNome.Enabled := false;
+  edtDescricao.Enabled := false;
+  edtCodigo.Enabled := false;
+  edtValor.Enabled := false;
+  btnAdd.Enabled := false;
+end;
+
+procedure TFrmProdutos.FormShow(Sender: TObject);
+begin
+desabilitarCampos;
+  dm.tb_produtos.Active := true;
+  listar;
+end;
+
+procedure TFrmProdutos.GerarCodigo(codigo: string; img: TCanvas);
+const
+digitos : array['0'..'9'] of string[5]= ('00110', '10001', '01001', '11000',
+'00101', '10100', '01100', '00011', '10010', '01010');
+var s : string;
+i, j, x, t : Integer;
+begin
+// Gerar o valor para desenhar o código de barras
+// Caracter de início
+s := '0000';
+for i := 1 to length(codigo) div 2 do
+for j := 1 to 5 do
+s := s + Copy(Digitos[codigo[i * 2 - 1]], j, 1) + Copy(Digitos[codigo[i * 2]], j, 1);
+// Caracter de fim
+s := s + '100';
+// Desenhar em um objeto canvas
+// Configurar os parâmetros iniciais
+x := 0;
+// Pintar o fundo do código de branco
+Canvas.Brush.Color := clWhite;
+Canvas.Pen.Color := clWhite;
+Canvas.Rectangle(0,0, 2000, 79);
+// Definir as cores da caneta
+Canvas.Brush.Color := clBlack;
+Canvas.Pen.Color := clBlack;
+// Escrever o código de barras no canvas
+for i := 1 to length(s) do
+begin
+// Definir a espessura da barra
+t := strToInt(s[i]) * 2 + 1;
+// Imprimir apenas barra sim barra não (preto/branco - intercalado);
+if i mod 2 = 1 then
+Canvas.Rectangle(x, 0, x + t, 79);
+// Passar para a próxima barra
+x := x + t;
+end;
+end;
+
+procedure TFrmProdutos.habilitarCampos;
+begin
+ edtNome.Enabled := true;
+  edtDescricao.Enabled := true;
+  edtCodigo.Enabled := true;
+  edtValor.Enabled := true;
+  btnAdd.Enabled := true;
+end;
+
+procedure TFrmProdutos.limpar;
+begin
+ edtNome.Text := '';
+  edtDescricao.Text := '';
+  edtCodigo.Text := '';
+  edtValor.Text := '';
+  btnAdd.Text := '';
+end;
+
+procedure TFrmProdutos.listar;
+begin
+        dm.query_produtos.Close;
+       dm.query_produtos.SQL.Clear;
+       dm.query_produtos.SQL.Add('SELECT * from produtos order by nome asc');
+       dm.query_produtos.Open;
+end;
+
+end.

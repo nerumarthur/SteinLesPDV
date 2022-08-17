@@ -1,0 +1,74 @@
+unit ExcluirDados;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Buttons;
+
+type
+  TFrmExcluirDados = class(TForm)
+    Label1: TLabel;
+    dataInicial: TDateTimePicker;
+    Label2: TLabel;
+    dataFinal: TDateTimePicker;
+    BtnExcluir: TSpeedButton;
+    procedure FormShow(Sender: TObject);
+    procedure BtnExcluirClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmExcluirDados: TFrmExcluirDados;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo;
+
+procedure TFrmExcluirDados.BtnExcluirClick(Sender: TObject);
+begin
+ if excluir = 'Vendas' then
+    begin
+      dm.query_vendas.Close;
+      dm.query_vendas.SQL.Clear;
+      dm.query_vendas.SQL.Add('DELETE from vendas where data >= :dataInicial and data <= :dataFinal');
+      dm.query_vendas.ParamByName('dataInicial').Value :=  FormatDateTime('yyyy/mm/dd', dataInicial.Date);
+      dm.query_vendas.ParamByName('dataFinal').Value :=  FormatDateTime('yyyy/mm/dd', dataFinal.Date);
+      dm.query_vendas.ExecSql;
+
+
+      dm.query_det_vendas.Close;
+      dm.query_det_vendas.SQL.Clear;
+      dm.query_det_vendas.SQL.Add('DELETE from detalhes_vendas where data >= :dataInicial and data <= :dataFinal');
+      dm.query_det_vendas.ParamByName('dataInicial').Value :=  FormatDateTime('yyyy/mm/dd', dataInicial.Date);
+      dm.query_det_vendas.ParamByName('dataFinal').Value :=  FormatDateTime('yyyy/mm/dd', dataFinal.Date);
+      dm.query_det_vendas.ExecSql;
+
+    end;
+
+
+     if excluir = 'Caixa' then
+    begin
+      dm.query_caixa.Close;
+      dm.query_caixa.SQL.Clear;
+      dm.query_caixa.SQL.Add('DELETE from caixa where data_abertura >= :dataInicial and data_abertura <= :dataFinal');
+      dm.query_caixa.ParamByName('dataInicial').Value :=  FormatDateTime('yyyy/mm/dd', dataInicial.Date);
+      dm.query_caixa.ParamByName('dataFinal').Value :=  FormatDateTime('yyyy/mm/dd', dataFinal.Date);
+      dm.query_caixa.ExecSql;
+    end;
+
+
+end;
+
+procedure TFrmExcluirDados.FormShow(Sender: TObject);
+begin
+dataInicial.Date := Date;
+dataFinal.Date := Date;
+end;
+
+end.

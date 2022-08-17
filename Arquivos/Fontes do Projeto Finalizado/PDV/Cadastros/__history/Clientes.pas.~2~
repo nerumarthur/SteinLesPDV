@@ -1,0 +1,60 @@
+unit Clientes;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Buttons, Vcl.StdCtrls,
+  Vcl.Grids, Vcl.DBGrids;
+
+type
+  TFrmClientes = class(TForm)
+    DBGrid1: TDBGrid;
+    Label1: TLabel;
+    EdtNome: TEdit;
+    edtMatricula: TEdit;
+    Label2: TLabel;
+    btnNovo: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    BtnEditar: TSpeedButton;
+    BtnExcluir: TSpeedButton;
+    edtBuscar: TEdit;
+    Label3: TLabel;
+    procedure edtBuscarChange(Sender: TObject);
+  private
+    { Private declarations }
+    procedure habilitarCampos;
+    procedure buscarNome;
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmClientes: TFrmClientes;
+
+implementation
+
+{$R *.dfm}
+uses Modulo;
+
+procedure TFrmClientes.edtBuscarChange(Sender: TObject);
+begin
+  buscarNome;
+end;
+
+procedure TFrmClientes.habilitarCampos;
+begin
+  EdtNome.Enabled := true;
+  edtMatricula.Enabled := true;
+end;
+procedure TFrmClientes.buscarNome;
+begin
+       dm.query_clientes.Close;
+       dm.query_clientes.SQL.Clear;
+       dm.query_clientes.SQL.Add('SELECT * from clientes where nome LIKE :nome and cargo <> :cargo order by nome asc');
+       dm.query_clientes.ParamByName('nome').Value := edtBuscar.Text + '%';
+       dm.query_clientes.ParamByName('cargo').Value := 'admin';
+       dm.query_clientes.Open;
+end;
+
+end.
